@@ -1,4 +1,3 @@
-require('dotenv').config({ path: './.env' });
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/rest');
 const { readdirSync } = require('fs');
