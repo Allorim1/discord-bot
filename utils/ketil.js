@@ -1,5 +1,5 @@
 const { QuickDB } = require('quick.db');
-const db = new QuickDB();
+const db = new QuickDB({ filePath: './data/json.sqlite' });
 
 const STARTING_DEBT = 50000;
 const ENERGY_MAX = 100;

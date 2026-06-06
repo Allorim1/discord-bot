@@ -1,5 +1,5 @@
 const { QuickDB } = require('quick.db');
-const db = new QuickDB();
+const db = new QuickDB({ filePath: './data/json.sqlite' });
 
 async function getUserGarden(userId) {
     return await db.get(`garden_${userId}`) || {
