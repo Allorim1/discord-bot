@@ -11,15 +11,20 @@ module.exports = {
         const plants = await getPlantTypes();
         
         const embed = new EmbedBuilder()
-            .setColor('#4ade80')
-            .setTitle(`Jardin de ${message.author.username}`)
+            .setColor('#6600ff')
+            .setTitle(`${message.author.username} - Jardin`)
+            .setAuthor({
+                name: 'Mini Juego',
+                iconURL: message.client.user.displayAvatarURL()
+            })
             .addFields(
                 { name: 'Semillas', value: garden.seeds.toString(), inline: true },
                 { name: 'Monedas', value: garden.coins.toString(), inline: true }
-            );
+            )
+            .setFooter({ text: 'Juego secundario de cultivo' });
         
         if (garden.plants.length === 0) {
-            embed.addFields({ name: 'Plantas', value: 'No tienes plantas. Planta alguna!' });
+            embed.addFields({ name: 'Plantas', value: 'No tienes plantas. Planta alguna con !plant' });
         } else {
             let plantList = '';
             for (let i = 0; i < garden.plants.length; i++) {

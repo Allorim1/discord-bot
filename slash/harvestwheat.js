@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { harvestWheat, getFarm } = require('../utils/ketil');
 
 module.exports = {
@@ -9,23 +9,42 @@ module.exports = {
         const farm = await getFarm(interaction.user.id);
         
         if (!farm.plot) {
-            return interaction.reply({ content: 'Primero usa /startv para comenzar tu aventura.', ephemeral: true });
+            const embed = new EmbedBuilder()
+                .setColor('#ff4444')
+                .setDescription('Primero usa `/startv` para comenzar tu aventura');
+            return interaction.reply({ embeds: [embed], ephemeral: true });
         }
         
         const result = await harvestWheat(interaction.user.id);
         
         if (result.error) {
-            return interaction.reply({ content: result.error, ephemeral: true });
+            const embed = new EmbedBuilder()
+                .setColor('#ff4444')
+                .setDescription(result.error);
+            return interaction.reply({ embeds: [embed], ephemeral: true });
         }
         
-        let msg = `Has cosechado trigo. Ahora tienes ${result.wheat} trigo(s). Deuda restante: ${result.debt} monedas.`;
+        const embed = new EmbedBuilder()
+            .setColor('#00ff88')
+            .setTitle('Cosecha Exitosa')
+            .setAuthor({
+                name: interaction.user.username,
+                iconURL: interaction.user.displayAvatarURL()
+            })
+            .addFields(
+                { name: 'Trigo', value: `${result.wheat} unidades`, inline: true },
+                { name: 'Monedas Ganadas', value: `+50`, inline: true },
+                { name: 'Deuda Restante', value: `${result.debt}` }
+            )
+            .setFooter({ text: 'Cada cosecha te acerca a la libertad', timestamp: new Date() });
         
         if (result.freed) {
-            msg += '\n\nHAS LOGRADO TU LIBERTAD! Ya no eres esclavo. Puedes viajar a nuevas tierras.';
+            embed.addFields({ name: '¡LIBERTAD!', value: 'Has pagado tu deuda. Ya no eres esclavo.' });
+            embed.setColor('#6600ff');
             assignFreedomRole(interaction, interaction.user.id);
         }
         
-        await interaction.reply(msg);
+        await interaction.reply({ embeds: [embed] });
     }
 };
 

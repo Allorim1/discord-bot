@@ -1,4 +1,5 @@
 const { getPlayerData, savePlayerData } = require('../utils/game');
+const { EmbedBuilder } = require('discord.js');
 
 const EXPEDITION_COST = 50;
 
@@ -9,11 +10,17 @@ module.exports = {
         const player = await getPlayerData(message.author.id);
         
         if (player.founded) {
-            return message.reply('Ya fundaste tu colonia. Usa !manage para gobernar.');
+            const embed = new EmbedBuilder()
+                .setColor('#ff4444')
+                .setDescription('Ya fundaste tu colonia. Usa !manage para gobernar.');
+            return message.reply({ embeds: [embed] });
         }
         
         if (player.coins < EXPEDITION_COST) {
-            return message.reply(`Necesitas ${EXPEDITION_COST} monedas para explorar.`);
+            const embed = new EmbedBuilder()
+                .setColor('#ff4444')
+                .setDescription(`Necesitas ${EXPEDITION_COST} monedas para explorar.`);
+            return message.reply({ embeds: [embed] });
         }
         
         player.coins -= EXPEDITION_COST;
@@ -39,6 +46,17 @@ module.exports = {
         
         await savePlayerData(message.author.id, player);
         
-        message.reply(`Expedicion exitosa: ${outcome.msg}\nKarma: +${outcome.karma}`);
+        const embed = new EmbedBuilder()
+            .setColor('#0ea5e9')
+            .setTitle('Expedicion Exitosa')
+            .setAuthor({
+                name: message.author.username,
+                iconURL: message.author.displayAvatarURL()
+            })
+            .setDescription(outcome.msg)
+            .addFields({ name: 'Karma', value: `+${outcome.karma}`, inline: true })
+            .setFooter({ text: 'La curiosidad es una virtud...' });
+        
+        message.reply({ embeds: [embed] });
     }
 };

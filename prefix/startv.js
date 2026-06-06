@@ -8,17 +8,29 @@ module.exports = {
         const result = await startAdventure(message.author.id);
         
         if (result.error) {
-            return message.reply(`❌ ${result.error}`);
+            const embed = new EmbedBuilder()
+                .setColor('#ff4444')
+                .setDescription(result.error);
+            return message.reply({ embeds: [embed] });
         }
         
         const farm = await getFarm(message.author.id);
         const energy = await getEnergy(message.author.id);
         
         const embed = new EmbedBuilder()
-            .setColor('#8b4513')
-            .setTitle('🏞️ Granja de Ketil')
-            .setDescription(`Has comenzado tu aventura como esclavo en la granja de Ketil.\nTe han asignado una parcela baldía.\n\n💰 Deuda: ${farm.debt} monedas de oro\n⚡ Energía: ${energy}/100`);
+            .setColor('#6600ff')
+            .setTitle('Granjas de Ketil')
+            .setAuthor({
+                name: `Bienvenido, ${message.author.username}`,
+                iconURL: message.author.displayAvatarURL()
+            })
+            .setDescription('Has comenzado tu aventura como esclavo.\nTe han asignado una parcela baldida.')
+            .addFields(
+                { name: 'Deuda', value: `${farm.debt} monedas de oro`, inline: true },
+                { name: 'Energia', value: `${energy}/100`, inline: true }
+            )
+            .setFooter({ text: 'Tu camino hacia la libertad empieza ahora' });
         
-        await message.reply({ embeds: [embed] });
+        message.reply({ embeds: [embed] });
     }
 };

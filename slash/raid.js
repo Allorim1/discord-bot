@@ -25,27 +25,44 @@ module.exports = {
         const target = RAIDS.find(r => r.id === targetId);
         
         if (!target) {
-            return interaction.reply({ content: 'Objetivo no valido', ephemeral: true });
+            const embed = new EmbedBuilder()
+                .setColor('#ff4444')
+                .setDescription('Objetivo no valido');
+            return interaction.reply({ embeds: [embed], ephemeral: true });
         }
         
         const player = await getPlayerData(interaction.user.id);
         
         if (player.founded) {
-            return interaction.reply({ content: 'Ya fundaste tu colonia. Usa /manage para gobernar.', ephemeral: true });
+            const embed = new EmbedBuilder()
+                .setColor('#ff4444')
+                .setDescription('Ya fundaste tu colonia. Usa /manage para gobernar.');
+            return interaction.reply({ embeds: [embed], ephemeral: true });
         }
         
         let success = Math.random() > 0.2;
         
         if (!success) {
-            player.karma -= 5;
+            player.karma = (player.karma || 0) - 5;
             await savePlayerData(interaction.user.id, player);
-            return interaction.reply(`El escuadron de Ketil te ha descubierto. Escapaste pero perdiste reputacion. Karma: ${player.karma}`);
+            
+            const embed = new EmbedBuilder()
+                .setColor('#ff4444')
+                .setTitle('Asalto Fallido')
+                .setAuthor({
+                    name: interaction.user.username,
+                    iconURL: interaction.user.displayAvatarURL()
+                })
+                .setDescription('El escuadron de Ketil te ha descubierto. Escapaste pero perdiste reputacion.')
+                .addFields({ name: 'Karma', value: `${player.karma}`, inline: true });
+            
+            return interaction.reply({ embeds: [embed] });
         }
         
         player.coins += target.rewards.coins || 0;
         if (target.rewards.wood) player.resources.wood += target.rewards.wood;
         if (target.rewards.iron) player.resources.iron += target.rewards.iron;
-        player.karma += target.karma;
+        player.karma = (player.karma || 0) + target.karma;
         player.crew = (player.crew || 0) + 1;
         
         await savePlayerData(interaction.user.id, player);
@@ -53,12 +70,17 @@ module.exports = {
         const embed = new EmbedBuilder()
             .setColor('#ef4444')
             .setTitle('Asalto Exitoso')
-            .setDescription(`Has asaltado a ${target.name}`)
+            .setAuthor({
+                name: interaction.user.username,
+                iconURL: interaction.user.displayAvatarURL()
+            })
+            .setDescription(`Has asaltado a **${target.name}**`)
             .addFields(
-                { name: 'Recompensas', value: `monedas +${target.rewards.coins || 0}\nmadera +${target.rewards.wood || 0}\nhierro +${target.rewards.iron || 0}` },
+                { name: 'Recompensas', value: `+${target.rewards.coins || 0} monedas\n+${target.rewards.wood || 0} madera\n+${target.rewards.iron || 0} hierro`, inline: true },
                 { name: 'Karma', value: `${player.karma}`, inline: true },
                 { name: 'Tripulacion', value: `+1 (${player.crew})`, inline: true }
-            );
+            )
+            .setFooter({ text: 'La violencia es un camino oscuro...', timestamp: new Date() });
         
         await interaction.reply({ embeds: [embed] });
     }

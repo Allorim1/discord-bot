@@ -9,11 +9,14 @@ module.exports = {
         await getEnergy(message.author.id);
         
         if (!farm.plot) {
-            return message.reply('❌ Primero usa `!startv` para comenzar tu aventura.');
+            const embed = new EmbedBuilder()
+                .setColor('#ff4444')
+                .setDescription('Primero usa !startv para comenzar tu aventura');
+            return message.reply({ embeds: [embed] });
         }
         
         const plotStates = {
-            cleared: 'Baldío (árboles)',
+            cleared: 'Baldio (arboles)',
             tilled: 'Arado',
             ready: 'Lista para sembrar'
         };
@@ -25,8 +28,12 @@ module.exports = {
         }
         
         const embed = new EmbedBuilder()
-            .setColor('#8b4513')
-            .setTitle('Tu Granja')
+            .setColor('#6600ff')
+            .setTitle(`${message.author.username} - Tu Granja`)
+            .setAuthor({
+                name: 'Ketil Farm RPG',
+                iconURL: message.client.user.displayAvatarURL()
+            })
             .addFields(
                 { name: 'Monedas', value: farm.coins.toString(), inline: true },
                 { name: 'Deuda', value: farm.debt.toString(), inline: true },
@@ -34,10 +41,11 @@ module.exports = {
                 { name: 'Region', value: farm.region, inline: true },
                 { name: 'Trigo', value: farm.inventory.wheat.toString(), inline: true },
                 { name: 'Parcela', value: plotStatus }
-            );
+            )
+            .setFooter({ text: 'La libertad esta a la vuelta de la esquina...' });
         
         if (farm.freedom) {
-            embed.addFields({ name: 'Estado', value: 'Eres libre!' });
+            embed.addFields({ name: 'Estado', value: '¡Eres libre!' });
         }
         
         message.reply({ embeds: [embed] });

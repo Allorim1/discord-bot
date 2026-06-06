@@ -10,7 +10,10 @@ module.exports = {
         await getEnergy(interaction.user.id);
         
         if (!farm.plot) {
-            return interaction.reply({ content: 'Primero usa /startv para comenzar tu aventura.', ephemeral: true });
+            const embed = new EmbedBuilder()
+                .setColor('#ff4444')
+                .setDescription('Primero usa `/startv` para comenzar tu aventura');
+            return interaction.reply({ embeds: [embed], ephemeral: true });
         }
         
         const plotStates = {
@@ -26,8 +29,12 @@ module.exports = {
         }
         
         const embed = new EmbedBuilder()
-            .setColor('#8b4513')
-            .setTitle('Tu Granja')
+            .setColor('#6600ff')
+            .setTitle(`${interaction.user.username} - Tu Granja`)
+            .setAuthor({
+                name: 'Ketil Farm RPG',
+                iconURL: interaction.client.user.displayAvatarURL()
+            })
             .addFields(
                 { name: 'Monedas', value: farm.coins.toString(), inline: true },
                 { name: 'Deuda', value: farm.debt.toString(), inline: true },
@@ -35,10 +42,11 @@ module.exports = {
                 { name: 'Region', value: farm.region, inline: true },
                 { name: 'Trigo', value: farm.inventory.wheat.toString(), inline: true },
                 { name: 'Parcela', value: plotStatus }
-            );
+            )
+            .setFooter({ text: 'La libertad esta a la vuelta de la esquina...', timestamp: new Date() });
         
         if (farm.freedom) {
-            embed.addFields({ name: 'Estado', value: 'Eres libre!' });
+            embed.addFields({ name: 'Estado', value: '¡Eres libre!' });
         }
         
         await interaction.reply({ embeds: [embed] });

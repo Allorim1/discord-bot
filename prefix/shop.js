@@ -8,16 +8,23 @@ module.exports = {
         const plants = await getPlantTypes();
         
         const embed = new EmbedBuilder()
-            .setColor('#3b82f6')
+            .setColor('#6600ff')
             .setTitle('Tienda de Semillas')
-            .setDescription('Usa !plant <planta> para comprar y plantar');
+            .setAuthor({
+                name: 'Mercado Central',
+                iconURL: message.client.user.displayAvatarURL()
+            })
+            .setDescription('Selecciona una planta para cultivar en tu jardin');
         
         for (const plant of plants) {
             embed.addFields({
                 name: plant.name,
-                value: `Costo: ${plant.seedCost} semillas | Venta: ${plant.sellPrice} monedas | Crecimiento: ${plant.growthTime}s`
+                value: `Costo: ${plant.seedCost} semillas | Venta: ${plant.sellPrice} monedas | Tiempo: ${plant.growthTime}s`,
+                inline: false
             });
         }
+        
+        embed.setFooter({ text: 'Usa !plant <planta> para sembrar' });
         
         message.reply({ embeds: [embed] });
     }

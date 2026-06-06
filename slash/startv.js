@@ -9,16 +9,28 @@ module.exports = {
         const result = await startAdventure(interaction.user.id);
         
         if (result.error) {
-            return interaction.reply({ content: result.error, ephemeral: true });
+            const embed = new EmbedBuilder()
+                .setColor('#ff4444')
+                .setDescription(result.error);
+            return interaction.reply({ embeds: [embed], ephemeral: true });
         }
         
         const farm = await getFarm(interaction.user.id);
         const energy = await getEnergy(interaction.user.id);
         
         const embed = new EmbedBuilder()
-            .setColor('#8b4513')
+            .setColor('#6600ff')
             .setTitle('Granjas de Ketil')
-            .setDescription(`Has comenzado tu aventura como esclavo en la granja de Ketil.\nTe han asignado una parcela baldida.\n\nDeuda: ${farm.debt} monedas de oro\nEnergia: ${energy}/100`);
+            .setAuthor({
+                name: `Bienvenido, ${interaction.user.username}`,
+                iconURL: interaction.user.displayAvatarURL()
+            })
+            .setDescription(`Has comenzado tu aventura como esclavo.\nTe han asignado una parcela baldida.\n\nTu deuda: ${farm.debt} monedas de oro`)
+            .addFields(
+                { name: 'Energia', value: `${energy}/100`, inline: true },
+                { name: 'Objetivo', value: 'Pagar la deuda para ganar libertad', inline: true }
+            )
+            .setFooter({ text: 'Usa /tutoria para guias paso a paso • Ketil Farm RPG', timestamp: new Date() });
         
         await interaction.reply({ embeds: [embed] });
     }

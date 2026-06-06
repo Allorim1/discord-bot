@@ -1,4 +1,5 @@
 const { harvestWheat, getFarm } = require('../utils/ketil');
+const { EmbedBuilder } = require('discord.js');
 
 module.exports = {
     name: 'harvestwheat',
@@ -7,23 +8,42 @@ module.exports = {
         const farm = await getFarm(message.author.id);
         
         if (!farm.plot) {
-            return message.reply('❌ Primero usa `!startv` para comenzar tu aventura.');
+            const embed = new EmbedBuilder()
+                .setColor('#ff4444')
+                .setDescription('Primero usa !startv para comenzar tu aventura');
+            return message.reply({ embeds: [embed] });
         }
         
         const result = await harvestWheat(message.author.id);
         
         if (result.error) {
-            return message.reply(`❌ ${result.error}`);
+            const embed = new EmbedBuilder()
+                .setColor('#ff4444')
+                .setDescription(result.error);
+            return message.reply({ embeds: [embed] });
         }
         
-        let msg = `Has cosechado trigo. Ahora tienes ${result.wheat} trigo(s). Deuda restante: ${result.debt} monedas.`;
+        const embed = new EmbedBuilder()
+            .setColor('#00ff88')
+            .setTitle('Cosecha Exitosa')
+            .setAuthor({
+                name: message.author.username,
+                iconURL: message.author.displayAvatarURL()
+            })
+            .addFields(
+                { name: 'Trigo', value: `${result.wheat} unidades`, inline: true },
+                { name: 'Monedas Ganadas', value: `+50`, inline: true },
+                { name: 'Deuda Restante', value: `${result.debt}` }
+            )
+            .setFooter({ text: 'Cada cosecha te acerca a la libertad' });
         
         if (result.freed) {
-            msg += '\n\nHAS LOGRADO TU LIBERTAD! Ya no eres esclavo. Puedes viajar a nuevas tierras.';
+            embed.addFields({ name: '¡LIBERTAD!', value: 'Has pagado tu deuda. Ya no eres esclavo.' });
+            embed.setColor('#6600ff');
             assignFreedomRole(message, message.author.id);
         }
         
-        message.reply(msg);
+        message.reply({ embeds: [embed] });
     }
 };
 

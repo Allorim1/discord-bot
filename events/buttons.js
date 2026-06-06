@@ -1,4 +1,5 @@
 const { getPlayerData, savePlayerData, getSettlement, saveSettlement, getAllSettlements } = require('../utils/game');
+const { EmbedBuilder } = require('discord.js');
 
 module.exports = {
     name: 'interactionCreate',
@@ -18,7 +19,13 @@ module.exports = {
                     player.coins += 100;
                     await savePlayerData(interaction.user.id, player);
                     await saveSettlement(interaction.user.id, settlement);
-                    await interaction.reply('Cobraste impuestos. +100 monedas. Tasa: ' + settlement.taxRate + '%');
+                    
+                    const embed = new EmbedBuilder()
+                        .setColor('#ef4444')
+                        .setTitle('Impuestos Cobrados')
+                        .setDescription(`+100 monedas. Tasa: ${settlement.taxRate}%`);
+                    
+                    await interaction.reply({ embeds: [embed] });
                 }
                 break;
                 
@@ -31,7 +38,13 @@ module.exports = {
                         settlement.population += 2;
                         await savePlayerData(interaction.user.id, player);
                         await saveSettlement(interaction.user.id, settlement);
-                        await interaction.reply('Has adquirido 2 esclavos para tu colonia');
+                        
+                        const embed = new EmbedBuilder()
+                            .setColor('#ef4444')
+                            .setTitle('Esclavitud')
+                            .setDescription('Has adquirido 2 esclavos para tu colonia');
+                        
+                        await interaction.reply({ embeds: [embed] });
                     } else {
                         await interaction.reply({ content: 'Necesitas 200 monedas', ephemeral: true });
                     }
@@ -47,11 +60,23 @@ module.exports = {
                         const [_, other] = otherSettlements[Math.floor(Math.random() * otherSettlements.length)];
                         player.coins += 150;
                         await savePlayerData(interaction.user.id, player);
-                        await interaction.reply(`Has creado una ruta comercial con ${other.name}. +150 monedas`);
+                        
+                        const embed = new EmbedBuilder()
+                            .setColor('#22c55e')
+                            .setTitle('Ruta Comercial')
+                            .setDescription(`Has creado una ruta comercial con ${other.name}. +150 monedas`);
+                        
+                        await interaction.reply({ embeds: [embed] });
                     } else {
                         player.coins += 50;
                         await savePlayerData(interaction.user.id, player);
-                        await interaction.reply('Has creado una ruta comercial externa. +50 monedas');
+                        
+                        const embed = new EmbedBuilder()
+                            .setColor('#22c55e')
+                            .setTitle('Ruta Comercial')
+                            .setDescription('+50 monedas');
+                        
+                        await interaction.reply({ embeds: [embed] });
                     }
                 }
                 break;
@@ -60,7 +85,13 @@ module.exports = {
                 if (!isTyrant) {
                     settlement.buildings.barracks = (settlement.buildings.barracks || 0) + 1;
                     await saveSettlement(interaction.user.id, settlement);
-                    await interaction.reply('Has fortificado tu colonia. Barracas: ' + settlement.buildings.barracks);
+                    
+                    const embed = new EmbedBuilder()
+                        .setColor('#3b82f6')
+                        .setTitle('Fortificacion')
+                        .setDescription(`Has fortificado tu colonia. Barracas: ${settlement.buildings.barracks}`);
+                    
+                    await interaction.reply({ embeds: [embed] });
                 }
                 break;
         }

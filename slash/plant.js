@@ -1,5 +1,5 @@
-const { SlashCommandBuilder } = require('discord.js');
-const { plantSeed } = require('../utils/db');
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { plantSeed, getPlantTypes } = require('../utils/db');
 
 const PLANTS = [
     { name: 'Trigo', value: 'wheat' },
@@ -23,10 +23,25 @@ module.exports = {
         const result = await plantSeed(interaction.user.id, plantType);
         
         if (result.error) {
-            return interaction.reply({ content: result.error, ephemeral: true });
+            const embed = new EmbedBuilder()
+                .setColor('#ff4444')
+                .setDescription(result.error);
+            return interaction.reply({ embeds: [embed], ephemeral: true });
         }
         
         const plantName = PLANTS.find(p => p.value === plantType)?.name || plantType;
-        await interaction.reply(`Has plantado ${plantName}! Te quedan ${result.seeds} semillas.`);
+        
+        const embed = new EmbedBuilder()
+            .setColor('#6600ff')
+            .setTitle('Planta Sembrada')
+            .setAuthor({
+                name: interaction.user.username,
+                iconURL: interaction.user.displayAvatarURL()
+            })
+            .setDescription(`Has plantado ${plantName}`)
+            .addFields({ name: 'Semillas Restantes', value: `${result.seeds}`, inline: true })
+            .setFooter({ text: 'Espera a que la planta este lista' });
+        
+        await interaction.reply({ embeds: [embed] });
     }
 };
