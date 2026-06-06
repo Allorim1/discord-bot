@@ -13,7 +13,7 @@ module.exports = {
         const oneDay = 24 * 60 * 60 * 1000;
         if (now - garden.lastDaily < oneDay) {
             const hoursLeft = Math.ceil((oneDay - (now - garden.lastDaily)) / (60 * 60 * 1000));
-            return message.reply(`⏰ Ya reclamaste tu recompensa diaria. Vuelve en ${hoursLeft} horas.`);
+            return message.reply(`Ya reclamaste tu recompensa diaria. Vuelve en ${hoursLeft} horas.`);
         }
         
         const seedsGained = 50;
@@ -21,6 +21,6 @@ module.exports = {
         garden.lastDaily = now;
         await saveUserGarden(message.author.id, garden);
         
-        message.reply(`🎁 Has recibido ${seedsGained} semillas! Total: ${garden.seeds}`);
+        message.reply(`Has recibido ${seedsGained} semillas! Total: ${garden.seeds}`);
     }
 };

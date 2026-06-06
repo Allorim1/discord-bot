@@ -14,12 +14,12 @@ module.exports = {
         const player = await getPlayerData(interaction.user.id);
         
         if (!player.resources.fertile_coords) {
-            return interaction.reply({ content: '❌ Necesitas descubrir coordenadas fértiles primero. Usa `/explore`.', ephemeral: true });
+            return interaction.reply({ content: 'Necesitas descubrir coordenadas fertilies primero. Usa /explore.', ephemeral: true });
         }
         
         const hasSettlement = Object.values(await getAllSettlements()).some(s => s.ownerId === interaction.user.id);
         if (hasSettlement) {
-            return interaction.reply({ content: '❌ Ya tienes una colonia fundada. Usa `/manage` para administrarla.', ephemeral: true });
+            return interaction.reply({ content: 'Ya tienes una colonia fundada. Usa /manage para administrarla.', ephemeral: true });
         }
         
         const settlement = {
@@ -45,6 +45,6 @@ module.exports = {
         player.founded = true;
         await savePlayerData(interaction.user.id, player);
         
-        await interaction.reply(`🏰 Has fundado tu colonia **${name}** con ${settlement.population} colonos. Usa \`/manage\` para gobernar.`);
+        await interaction.reply(`Has fundado tu colonia ${name} con ${settlement.population} colonos. Usa /manage para gobernar.`);
     }
 };

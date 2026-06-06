@@ -3,25 +3,25 @@ const { harvestWheat, getFarm } = require('../utils/ketil');
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('harvest')
+        .setName('harvestwheat')
         .setDescription('Cosechar el trigo de tu parcela'),
     async execute(interaction) {
         const farm = await getFarm(interaction.user.id);
         
         if (!farm.plot) {
-            return interaction.reply({ content: '❌ Primero usa `/startv` para comenzar tu aventura.', ephemeral: true });
+            return interaction.reply({ content: 'Primero usa /startv para comenzar tu aventura.', ephemeral: true });
         }
         
         const result = await harvestWheat(interaction.user.id);
         
         if (result.error) {
-            return interaction.reply({ content: `❌ ${result.error}`, ephemeral: true });
+            return interaction.reply({ content: result.error, ephemeral: true });
         }
         
-        let msg = `✅ Has cosechado trigo. Ahora tienes ${result.wheat} trigo(s). Deuda restante: ${result.debt} monedas.`;
+        let msg = `Has cosechado trigo. Ahora tienes ${result.wheat} trigo(s). Deuda restante: ${result.debt} monedas.`;
         
         if (result.freed) {
-            msg += '\n\n🎉 ¡HAS LOGRADO TU LIBERTAD! Ya no eres esclavo. Puedes viajar a nuevas tierras.';
+            msg += '\n\nHAS LOGRADO TU LIBERTAD! Ya no eres esclavo. Puedes viajar a nuevas tierras.';
             assignFreedomRole(interaction, interaction.user.id);
         }
         

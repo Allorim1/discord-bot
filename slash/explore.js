@@ -11,20 +11,20 @@ module.exports = {
         const player = await getPlayerData(interaction.user.id);
         
         if (player.founded) {
-            return interaction.reply({ content: '❌ Ya fundaste tu colonia. Usa `/manage` para gobernar.', ephemeral: true });
+            return interaction.reply({ content: 'Ya fundaste tu colonia. Usa /manage para gobernar.', ephemeral: true });
         }
         
         if (player.coins < EXPEDITION_COST) {
-            return interaction.reply({ content: `❌ Necesitas ${EXPEDITION_COST} monedas para explorar.`, ephemeral: true });
+            return interaction.reply({ content: `Necesitas ${EXPEDITION_COST} monedas para explorar.`, ephemeral: true });
         }
         
         player.coins -= EXPEDITION_COST;
         
         const outcomes = [
             { msg: 'Encontraste un mapa antiguo', reward: { maps: 1 }, karma: 5 },
-            { msg: 'Recogiste pieles raras de animales exóticos', reward: { rare_pelts: 2 }, karma: 10 },
+            { msg: 'Recogiste pieles raras de animales exoticos', reward: { rare_pelts: 2 }, karma: 10 },
             { msg: 'Encontraste madera especial en el bosque', reward: { rare_wood: 3 }, karma: 5 },
-            { msg: 'Descubriste coordenadas de tierras fértiles', reward: { fertile_coords: true }, karma: 15 },
+            { msg: 'Descubriste coordenadas de tierras fertiles', reward: { fertile_coords: true }, karma: 15 },
             { msg: 'Encontraste recursos naturales', reward: { wood: 20, iron: 10 }, karma: 0 }
         ];
         
@@ -43,7 +43,7 @@ module.exports = {
         
         const embed = new EmbedBuilder()
             .setColor('#0ea5e9')
-            .setTitle('🧭 Expedición Exitosa')
+            .setTitle('Expedicion Exitosa')
             .setDescription(outcome.msg)
             .addFields({ name: 'Karma', value: `+${outcome.karma}` });
         

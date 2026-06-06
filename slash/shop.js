@@ -10,8 +10,8 @@ module.exports = {
         
         const embed = new EmbedBuilder()
             .setColor('#3b82f6')
-            .setTitle('🏪 Tienda de Semillas')
-            .setDescription('Usa `/plant <planta>` para comprar y plantar');
+            .setTitle('Tienda de Semillas')
+            .setDescription('Usa /plant <planta> para comprar y plantar');
         
         for (const plant of plants) {
             embed.addFields({

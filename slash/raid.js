@@ -13,7 +13,7 @@ module.exports = {
         .setDescription('Asaltar objetivos (Mercenario)')
         .addStringOption(option =>
             option.setName('objetivo')
-                .setDescription('Qué asaltar')
+                .setDescription('Que asaltar')
                 .setRequired(true)
                 .addChoices(
                     { name: 'Aldea Costera', value: 'coastal_village' },
@@ -25,13 +25,13 @@ module.exports = {
         const target = RAIDS.find(r => r.id === targetId);
         
         if (!target) {
-            return interaction.reply({ content: '❌ Objetivo no válido', ephemeral: true });
+            return interaction.reply({ content: 'Objetivo no valido', ephemeral: true });
         }
         
         const player = await getPlayerData(interaction.user.id);
         
         if (player.founded) {
-            return interaction.reply({ content: '❌ Ya fundaste tu colonia. Usa `/manage` para gobernar.', ephemeral: true });
+            return interaction.reply({ content: 'Ya fundaste tu colonia. Usa /manage para gobernar.', ephemeral: true });
         }
         
         let success = Math.random() > 0.2;
@@ -39,7 +39,7 @@ module.exports = {
         if (!success) {
             player.karma -= 5;
             await savePlayerData(interaction.user.id, player);
-            return interaction.reply(`❌ El escuadrón de Ketil te ha descubierto. Escapaste pero perdiste reputación. Karma: ${player.karma}`);
+            return interaction.reply(`El escuadron de Ketil te ha descubierto. Escapaste pero perdiste reputacion. Karma: ${player.karma}`);
         }
         
         player.coins += target.rewards.coins || 0;
@@ -52,12 +52,12 @@ module.exports = {
         
         const embed = new EmbedBuilder()
             .setColor('#ef4444')
-            .setTitle('⚔️ Asalto Exitoso')
-            .setDescription(`Has asaltado a **${target.name}**`)
+            .setTitle('Asalto Exitoso')
+            .setDescription(`Has asaltado a ${target.name}`)
             .addFields(
-                { name: 'Recompensas', value: `💰 +${target.rewards.coins || 0} monedas\n🪵 +${target.rewards.wood || 0} madera\n⛏️ +${target.rewards.iron || 0} hierro` },
+                { name: 'Recompensas', value: `monedas +${target.rewards.coins || 0}\nmadera +${target.rewards.wood || 0}\nhierro +${target.rewards.iron || 0}` },
                 { name: 'Karma', value: `${player.karma}`, inline: true },
-                { name: 'Tripulación', value: `+1 (${player.crew})`, inline: true }
+                { name: 'Tripulacion', value: `+1 (${player.crew})`, inline: true }
             );
         
         await interaction.reply({ embeds: [embed] });

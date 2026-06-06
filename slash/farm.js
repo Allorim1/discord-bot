@@ -44,26 +44,3 @@ module.exports = {
         await interaction.reply({ embeds: [embed] });
     }
 };
-        
-        const embed = new EmbedBuilder()
-            .setColor('#8b4513')
-            .setTitle('🏞️ Tu Granja')
-            .addFields(
-                { name: '💰 Monedas', value: farm.coins.toString(), inline: true },
-                { name: '💎 Deuda', value: farm.debt.toString(), inline: true },
-                { name: '⚡ Energía', value: `${farm.energy}/100`, inline: true },
-                { name: '📍 Región', value: farm.region, inline: true },
-                { name: '🌾 Trigo', value: farm.inventory.wheat.toString(), inline: true },
-                { name: '📊 Parcela', value: farm.plot.planted 
-                    ? `🌱 Creciendo (${Math.max(0, 300 - Math.floor((Date.now() - farm.plot.crop?.plantedAt)/1000))}s)` 
-                    : plotStates[farm.plot.state]
-                }
-            );
-        
-        if (farm.freedom) {
-            embed.addFields({ name: '🔓 Estado', value: '¡Eres libre!' });
-        }
-        
-        await interaction.reply({ embeds: [embed] });
-    }
-};

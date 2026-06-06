@@ -9,9 +9,9 @@ module.exports = {
         const result = await tillSoil(interaction.user.id);
         
         if (result.error) {
-            return interaction.reply({ content: `❌ ${result.error}`, ephemeral: true });
+            return interaction.reply({ content: result.error, ephemeral: true });
         }
         
-        await interaction.reply(`✅ Has arado la tierra. La parcela está lista para sembrar. Energía restante: ${result.energy}`);
+        await interaction.reply(`Has arado la tierra. La parcela esta lista para sembrar. Energia restante: ${result.energy}`);
     }
 };

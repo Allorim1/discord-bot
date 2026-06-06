@@ -16,10 +16,10 @@ module.exports = {
             return message.reply(`❌ ${result.error}`);
         }
         
-        let msg = `✅ Has cosechado trigo. Ahora tienes ${result.wheat} trigo(s). Deuda restante: ${result.debt} monedas.`;
+        let msg = `Has cosechado trigo. Ahora tienes ${result.wheat} trigo(s). Deuda restante: ${result.debt} monedas.`;
         
         if (result.freed) {
-            msg += '\n\n🎉 ¡HAS LOGRADO TU LIBERTAD! Ya no eres esclavo. Puedes viajar a nuevas tierras.';
+            msg += '\n\nHAS LOGRADO TU LIBERTAD! Ya no eres esclavo. Puedes viajar a nuevas tierras.';
             assignFreedomRole(message, message.author.id);
         }
         

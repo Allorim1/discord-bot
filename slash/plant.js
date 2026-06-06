@@ -5,7 +5,7 @@ const PLANTS = [
     { name: 'Trigo', value: 'wheat' },
     { name: 'Zanahoria', value: 'carrot' },
     { name: 'Tomate', value: 'tomato' },
-    { name: 'Maíz', value: 'corn' }
+    { name: 'Maiz', value: 'corn' }
 ];
 
 module.exports = {
@@ -23,10 +23,10 @@ module.exports = {
         const result = await plantSeed(interaction.user.id, plantType);
         
         if (result.error) {
-            return interaction.reply({ content: `❌ ${result.error}`, ephemeral: true });
+            return interaction.reply({ content: result.error, ephemeral: true });
         }
         
         const plantName = PLANTS.find(p => p.value === plantType)?.name || plantType;
-        await interaction.reply(`✅ Has plantado ${plantName}! Te quedan ${result.seeds} semillas.`);
+        await interaction.reply(`Has plantado ${plantName}! Te quedan ${result.seeds} semillas.`);
     }
 };

@@ -9,7 +9,7 @@ module.exports = {
         const result = await startAdventure(interaction.user.id);
         
         if (result.error) {
-            return interaction.reply({ content: `❌ ${result.error}`, ephemeral: true });
+            return interaction.reply({ content: result.error, ephemeral: true });
         }
         
         const farm = await getFarm(interaction.user.id);
@@ -17,8 +17,8 @@ module.exports = {
         
         const embed = new EmbedBuilder()
             .setColor('#8b4513')
-            .setTitle('🏞️ Granja de Ketil')
-            .setDescription(`Has comenzado tu aventura como esclavo en la granja de Ketil.\nTe han asignado una parcela baldía.\n\n💰 Deuda: ${farm.debt} monedas de oro\n⚡ Energía: ${energy}/${100}`);
+            .setTitle('Granjas de Ketil')
+            .setDescription(`Has comenzado tu aventura como esclavo en la granja de Ketil.\nTe han asignado una parcela baldida.\n\nDeuda: ${farm.debt} monedas de oro\nEnergia: ${energy}/100`);
         
         await interaction.reply({ embeds: [embed] });
     }

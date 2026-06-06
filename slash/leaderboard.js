@@ -13,12 +13,12 @@ module.exports = {
             .slice(0, 10);
         
         if (sorted.length === 0) {
-            return interaction.reply('Aún no hay puntuaciones registradas.');
+            return interaction.reply('Aun no hay puntuaciones registradas.');
         }
         
         const embed = new EmbedBuilder()
             .setColor('#fbbf24')
-            .setTitle('🏆 Leaderboard de Trivia');
+            .setTitle('Leaderboard de Trivia');
         
         let rank = 1;
         for (const [userId, points] of sorted) {

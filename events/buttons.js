@@ -18,7 +18,7 @@ module.exports = {
                     player.coins += 100;
                     await savePlayerData(interaction.user.id, player);
                     await saveSettlement(interaction.user.id, settlement);
-                    await interaction.reply('💰 Cobraste impuestos. +100 monedas. Tasa: ' + settlement.taxRate + '%');
+                    await interaction.reply('Cobraste impuestos. +100 monedas. Tasa: ' + settlement.taxRate + '%');
                 }
                 break;
                 
@@ -31,9 +31,9 @@ module.exports = {
                         settlement.population += 2;
                         await savePlayerData(interaction.user.id, player);
                         await saveSettlement(interaction.user.id, settlement);
-                        await interaction.reply('⛓️ Has adquirido 2 esclavos para tu colonia');
+                        await interaction.reply('Has adquirido 2 esclavos para tu colonia');
                     } else {
-                        await interaction.reply({ content: '❌ Necesitas 200 monedas', ephemeral: true });
+                        await interaction.reply({ content: 'Necesitas 200 monedas', ephemeral: true });
                     }
                 }
                 break;
@@ -47,11 +47,11 @@ module.exports = {
                         const [_, other] = otherSettlements[Math.floor(Math.random() * otherSettlements.length)];
                         player.coins += 150;
                         await savePlayerData(interaction.user.id, player);
-                        await interaction.reply(`🚢 Has creado una ruta comercial con ${other.name}. +150 monedas`);
+                        await interaction.reply(`Has creado una ruta comercial con ${other.name}. +150 monedas`);
                     } else {
                         player.coins += 50;
                         await savePlayerData(interaction.user.id, player);
-                        await interaction.reply('🚢 Has creado una ruta comercial externa. +50 monedas');
+                        await interaction.reply('Has creado una ruta comercial externa. +50 monedas');
                     }
                 }
                 break;
@@ -60,7 +60,7 @@ module.exports = {
                 if (!isTyrant) {
                     settlement.buildings.barracks = (settlement.buildings.barracks || 0) + 1;
                     await saveSettlement(interaction.user.id, settlement);
-                    await interaction.reply('🛡️ Has fortificado tu colonia. Barracas: ' + settlement.buildings.barracks);
+                    await interaction.reply('Has fortificado tu colonia. Barracas: ' + settlement.buildings.barracks);
                 }
                 break;
         }

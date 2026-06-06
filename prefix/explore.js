@@ -9,11 +9,11 @@ module.exports = {
         const player = await getPlayerData(message.author.id);
         
         if (player.founded) {
-            return message.reply('❌ Ya fundaste tu colonia. Usa !manage para gobernar.');
+            return message.reply('Ya fundaste tu colonia. Usa !manage para gobernar.');
         }
         
         if (player.coins < EXPEDITION_COST) {
-            return message.reply(`❌ Necesitas ${EXPEDITION_COST} monedas para explorar.`);
+            return message.reply(`Necesitas ${EXPEDITION_COST} monedas para explorar.`);
         }
         
         player.coins -= EXPEDITION_COST;
@@ -22,7 +22,7 @@ module.exports = {
             { msg: 'Encontraste un mapa antiguo', reward: { maps: 1 }, karma: 5 },
             { msg: 'Recogiste pieles raras', reward: { rare_pelts: 2 }, karma: 10 },
             { msg: 'Encontraste madera especial', reward: { rare_wood: 3 }, karma: 5 },
-            { msg: 'Descubriste coordenadas fértiles', reward: { fertile_coords: true }, karma: 15 },
+            { msg: 'Descubriste coordenadas fertilies', reward: { fertile_coords: true }, karma: 15 },
             { msg: 'Encontraste recursos naturales', reward: { wood: 20, iron: 10 }, karma: 0 }
         ];
         
@@ -39,6 +39,6 @@ module.exports = {
         
         await savePlayerData(message.author.id, player);
         
-        message.reply(`🧭 Expedición exitosa: ${outcome.msg}\nKarma: +${outcome.karma}`);
+        message.reply(`Expedicion exitosa: ${outcome.msg}\nKarma: +${outcome.karma}`);
     }
 };

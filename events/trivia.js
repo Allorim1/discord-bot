@@ -17,7 +17,7 @@ module.exports = {
             }
             
             currentQuestion = await getRandomTriviaQuestion();
-            channel.send(`❓ **Trivia de la hora**: ${currentQuestion.question}\nEscríbelo en 60 segundos para ganar un punto!`);
+            channel.send(`Trivia de la hora: ${currentQuestion.question}\nEscribelo en 60 segundos para ganar un punto!`);
             
             setTimeout(() => {
                 currentQuestion = null;
@@ -32,7 +32,7 @@ module.exports.handleAnswer = async (message) => {
     const answer = message.content.toLowerCase().trim();
     if (answer === currentQuestion.answer.toLowerCase()) {
         const points = await addTriviaPoint(message.author.id);
-        message.reply(`🎉 ¡${message.author.username} respondió correctamente! Ganó 1 punto. Total: ${points}`);
+        message.reply(`${message.author.username} respondio correctamente! Gano 1 punto. Total: ${points}`);
         currentQuestion = null;
         return true;
     }

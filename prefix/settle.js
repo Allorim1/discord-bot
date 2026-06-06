@@ -13,12 +13,12 @@ module.exports = {
         const player = await getPlayerData(message.author.id);
         
         if (!player.resources.fertile_coords) {
-            return message.reply('❌ Necesitas descubrir coordenadas fértiles primero. Usa !explore.');
+            return message.reply('Necesitas descubrir coordenadas fertilies primero. Usa !explore.');
         }
         
         const hasSettlement = Object.values(await getAllSettlements()).some(s => s.ownerId === message.author.id);
         if (hasSettlement) {
-            return message.reply('❌ Ya tienes una colonia fundada. Usa !manage para administrarla.');
+            return message.reply('Ya tienes una colonia fundada. Usa !manage para administrarla.');
         }
         
         const settlement = {
@@ -44,6 +44,6 @@ module.exports = {
         player.founded = true;
         await savePlayerData(message.author.id, player);
         
-        message.reply(`🏰 Has fundado tu colonia **${name}** con ${settlement.population} colonos. Usa !manage para gobernar.`);
+        message.reply(`Has fundado tu colonia ${name} con ${settlement.population} colonos. Usa !manage para gobernar.`);
     }
 };
