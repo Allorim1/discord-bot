@@ -1,13 +1,17 @@
+require('dotenv').config({ path: './.env' });
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/rest');
 const { readdirSync } = require('fs');
 const path = require('path');
 
 const commands = [];
-const slashCommandsPath = path.join(__dirname, 'slash');
-readdirSync(slashCommandsPath).forEach(file => {
-    const command = require(`./slash/${file}`);
-    commands.push(command.data.toJSON());
+const commandsPath = path.join(__dirname, 'commands');
+
+readdirSync(commandsPath).forEach(file => {
+    const command = require(`./commands/${file}`);
+    if (command.data) {
+        commands.push(command.data().toJSON());
+    }
 });
 
 const rest = new REST({ version: '10' }).setToken(process.env.token);
