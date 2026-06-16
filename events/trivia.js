@@ -1,7 +1,7 @@
 const { getRandomTriviaQuestion, addTriviaPoint } = require('../utils/db');
 
 let currentQuestion = null;
-const TRIVIA_CHANNEL_ID = '1501440507161743380';
+const TRIVIA_CHANNEL_ID = '1514320666029981728';
 
 module.exports = {
     name: 'ready',
