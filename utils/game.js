@@ -34,8 +34,8 @@ async function saveSettlement(userId, settlement) {
 async function getAllSettlements() {
     const all = {};
     for (const key of await db.all()) {
-        if (key.key.startsWith('settlement_')) {
-            const ownerId = key.key.replace('settlement_', '');
+        if (key.id.startsWith('settlement_')) {
+            const ownerId = key.id.replace('settlement_', '');
             all[ownerId] = key.value;
         }
     }

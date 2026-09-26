@@ -119,6 +119,69 @@ const COMMANDS = [
         category: 'Trivia',
         cooldown: 5,
         aliases: ['trivia']
+    },
+    {
+        name: 'vincular',
+        description: 'Vincular tu Discord con tu Riot ID',
+        category: 'Valorant',
+        cooldown: 10,
+        aliases: []
+    },
+    {
+        name: 'desvincular',
+        description: 'Quitar tu Riot ID vinculado',
+        category: 'Valorant',
+        cooldown: 5,
+        aliases: []
+    },
+    {
+        name: 'partida',
+        description: 'Ver la tabla de la ultima partida (Nombre#TAG, @usuario o tu cuenta)',
+        category: 'Valorant',
+        cooldown: 10,
+        aliases: []
+    },
+    {
+        name: 'valcanal',
+        description: 'Elegir el canal de avisos de partidas (admins)',
+        category: 'Valorant',
+        cooldown: 5,
+        aliases: []
+    },
+    {
+        name: 'agente',
+        description: 'Ver informacion y habilidades de un agente',
+        category: 'Valorant',
+        cooldown: 5,
+        aliases: []
+    },
+    {
+        name: 'arma',
+        description: 'Ver estadisticas de un arma',
+        category: 'Valorant',
+        cooldown: 5,
+        aliases: []
+    },
+    {
+        name: 'mapa',
+        description: 'Ver informacion de un mapa',
+        category: 'Valorant',
+        cooldown: 5,
+        aliases: []
+    },
+    {
+        name: 'rango',
+        description: 'Ver rango y ultimas partidas (Nombre#TAG, @usuario o tu cuenta)',
+        category: 'Valorant',
+        cooldown: 10,
+        aliases: []
+    },
+    {
+        name: 'valtrivia',
+        description: 'Lanzar una pregunta de trivia de Valorant',
+        category: 'Valorant',
+        cooldown: 10,
+        aliases: []
     }
 ];
 

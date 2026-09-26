@@ -97,8 +97,8 @@ async function checkReadyPlants(userId) {
 async function getAllTriviaScores() {
     const allScores = {};
     for (const key of await db.all()) {
-        if (key.key.startsWith('trivia_points_')) {
-            const userId = key.key.replace('trivia_points_', '');
+        if (key.id.startsWith('trivia_points_')) {
+            const userId = key.id.replace('trivia_points_', '');
             allScores[userId] = key.value;
         }
     }
@@ -158,6 +158,56 @@ function decodeHTMLEntities(text) {
     return text.replace(/&#?\w+;/g, match => entities[match] || match);
 }
 
+async function getValorantLink(userId) {
+    return await db.get(`valorant_link_${userId}`) || null;
+}
+
+async function setValorantLink(userId, link) {
+    await db.set(`valorant_link_${userId}`, link);
+}
+
+async function deleteValorantLink(userId) {
+    await db.delete(`valorant_link_${userId}`);
+    await db.delete(`valorant_lastmatch_${userId}`);
+}
+
+async function getAllValorantLinks() {
+    const links = [];
+    for (const row of await db.all()) {
+        if (row.id.startsWith('valorant_link_')) {
+            links.push({ userId: row.id.replace('valorant_link_', ''), ...row.value });
+        }
+    }
+    return links;
+}
+
+async function getValorantLastMatch(userId) {
+    return await db.get(`valorant_lastmatch_${userId}`) || null;
+}
+
+async function setValorantLastMatch(userId, matchId) {
+    await db.set(`valorant_lastmatch_${userId}`, matchId);
+}
+
+async function getValorantChannel(guildId) {
+    return await db.get(`valorant_channel_${guildId}`) || null;
+}
+
+async function setValorantChannel(guildId, channelId) {
+    if (channelId) await db.set(`valorant_channel_${guildId}`, channelId);
+    else await db.delete(`valorant_channel_${guildId}`);
+}
+
+async function getAllValorantChannels() {
+    const channels = [];
+    for (const row of await db.all()) {
+        if (row.id.startsWith('valorant_channel_')) {
+            channels.push({ guildId: row.id.replace('valorant_channel_', ''), channelId: row.value });
+        }
+    }
+    return channels;
+}
+
 module.exports = {
     getUserGarden,
     saveUserGarden,
@@ -170,5 +220,14 @@ module.exports = {
     getTriviaPoints,
     addTriviaPoint,
     getAllTriviaScores,
-    getRandomTriviaQuestion
+    getRandomTriviaQuestion,
+    getValorantLink,
+    setValorantLink,
+    deleteValorantLink,
+    getAllValorantLinks,
+    getValorantLastMatch,
+    setValorantLastMatch,
+    getValorantChannel,
+    setValorantChannel,
+    getAllValorantChannels
 };

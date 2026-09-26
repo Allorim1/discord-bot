@@ -12,6 +12,8 @@ const client = new Client({
     ]
 });
 
+const valTrivia = require('./utils/valtrivia');
+
 client.commands = new Collection();
 client.prefixCommands = new Collection();
 
@@ -49,10 +51,15 @@ client.on('interactionCreate', async interaction => {
     
     try {
         const result = await command.execute(interaction);
-        if (result) await interaction.reply(result);
+        if (result) {
+            if (interaction.deferred) await interaction.editReply(result);
+            else await interaction.reply(result);
+        }
     } catch (error) {
         console.error(error);
-        if (!interaction.replied) {
+        if (interaction.deferred) {
+            await interaction.editReply({ content: 'Error al ejecutar el comando.' });
+        } else if (!interaction.replied) {
             await interaction.reply({ content: 'Error al ejecutar el comando.', ephemeral: true });
         }
     }
@@ -65,6 +72,7 @@ client.on('messageCreate', async message => {
     // Handle trivia answers
     const triviaHandler = require('./events/trivia');
     if (await triviaHandler.handleAnswer(message)) return;
+    if (await valTrivia.handleAnswer(message)) return;
     
     const prefix = process.env.prefix;
     if (!message.content.startsWith(prefix)) return;

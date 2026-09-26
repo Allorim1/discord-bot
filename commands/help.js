@@ -20,7 +20,8 @@ module.exports = {
                     { name: 'Accion', value: 'accion' },
                     { name: 'Gobierno', value: 'gobierno' },
                     { name: 'Jardin', value: 'jardin' },
-                    { name: 'Trivia', value: 'trivia' }
+                    { name: 'Trivia', value: 'trivia' },
+                    { name: 'Valorant', value: 'valorant' }
                 )),
     
     async execute(context, args) {
@@ -59,7 +60,8 @@ module.exports = {
                 { name: 'Accion', value: '!raid !explore', inline: false },
                 { name: 'Gobierno', value: '!settle !manage', inline: false },
                 { name: 'Jardin', value: '!garden !plant !shop', inline: false },
-                { name: 'Trivia', value: '!leaderboard !triviascore', inline: false }
+                { name: 'Trivia', value: '!leaderboard !triviascore', inline: false },
+                { name: 'Valorant', value: '!vincular !desvincular !rango !partida !valcanal !agente !arma !mapa !valtrivia', inline: false }
             )
             .setFooter({ text: 'Tip: Usa !help <categoria> para ver comandos especificos • Ketil Farm RPG' });
         
