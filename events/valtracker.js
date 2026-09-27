@@ -21,7 +21,7 @@ let running = false;
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 module.exports = {
-    name: 'ready',
+    name: 'clientReady',
     once: true,
     async execute(client) {
         if (!process.env.HENRIK_API_KEY) {

@@ -1,7 +1,7 @@
 const { Player } = require('discord-player');
 
 module.exports = {
-    name: 'ready',
+    name: 'clientReady',
     once: true,
     async execute(client) {
         console.log(`Bot conectado como ${client.user.tag}`);

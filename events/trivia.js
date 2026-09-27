@@ -4,7 +4,7 @@ let currentQuestion = null;
 const TRIVIA_CHANNEL_ID = '1514320666029981728';
 
 module.exports = {
-    name: 'ready',
+    name: 'clientReady',
     once: true,
     async execute(client) {
         console.log(`Bot conectado como ${client.user.tag}`);
