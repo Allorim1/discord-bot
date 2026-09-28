@@ -1,5 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { getSkins, getContentTiers, normalize } = require('../utils/valorant');
+const { getSkinPrice } = require('../utils/valstore');
 
 const COLORS = { PRIMARY: '#ff4655', WARNING: '#ffaa00' };
 
@@ -36,6 +37,9 @@ module.exports = {
 
         const skin = matches[0];
         const tier = (await getContentTiers()).find(t => t.uuid === skin.contentTierUuid);
+        // El precio sale de la API de HenrikDev: si falla, la skin se muestra igual
+        // undefined = no se pudo consultar; null = no se vende en la tienda
+        const price = await getSkinPrice(skin).catch(() => undefined);
         const video = [...skin.levels].reverse().find(level => level.streamedVideo)?.streamedVideo;
 
         const embed = new EmbedBuilder()
@@ -46,6 +50,10 @@ module.exports = {
                 { name: 'Arma', value: skin.weaponName, inline: true },
                 { name: 'Niveles', value: String(skin.levels.length), inline: true }
             );
+
+        if (price !== undefined) {
+            embed.addFields({ name: 'Precio', value: price ? `${price} VP` : 'No se vende en la tienda', inline: true });
+        }
 
         if (tier) embed.setAuthor({ name: tier.displayName.trim(), iconURL: tier.displayIcon });
 

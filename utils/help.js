@@ -266,6 +266,55 @@ const COMMANDS = [
         category: 'Valorant',
         cooldown: 10,
         aliases: []
+    },
+    {
+        name: 'bundle',
+        description: 'Paquete destacado de la tienda',
+        category: 'Valorant',
+        cooldown: 10,
+        aliases: []
+    },
+    {
+        name: 'progreso',
+        description: 'Grafico de RR de las ultimas competitivas',
+        category: 'Valorant',
+        cooldown: 15,
+        aliases: []
+    },
+    {
+        name: 'perfil',
+        description: 'Tu perfil: rango, creditos, insignias',
+        category: 'Valorant',
+        cooldown: 5,
+        aliases: []
+    },
+    {
+        name: 'logros',
+        description: 'Logros desbloqueados y los que faltan',
+        category: 'Valorant',
+        cooldown: 5,
+        aliases: []
+    },
+    {
+        name: 'valordle',
+        description: 'Adivina el agente del dia',
+        category: 'Valorant',
+        cooldown: 2,
+        aliases: []
+    },
+    {
+        name: 'veto',
+        description: 'Veto de mapas entre dos capitanes',
+        category: 'Valorant',
+        cooldown: 10,
+        aliases: []
+    },
+    {
+        name: 'callouts',
+        description: 'Nombres de las zonas de un mapa',
+        category: 'Valorant',
+        cooldown: 5,
+        aliases: []
     }
 ];
 

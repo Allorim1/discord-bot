@@ -2,6 +2,8 @@ const { getMMRHistoryByPuuid, getMatch, translateRank, ValorantApiError } = requ
 const { buildMatchEmbed } = require('../utils/valmatch');
 const { syncMemberRankRole } = require('../utils/valroles');
 const { resolveBets, refundExpiredBets } = require('../utils/valbets');
+const { checkRankAchievements, checkMatchAchievements, formatUnlocked } = require('../utils/valachievements');
+const { weekKey } = require('../utils/valtime');
 const {
     getAllValorantLinks,
     getAllValorantChannels,
@@ -10,7 +12,9 @@ const {
     setValorantLastMatch,
     getValorantRank,
     setValorantRank,
-    getAllBets
+    getAllBets,
+    getWeekStats,
+    setWeekStats
 } = require('../utils/db');
 
 // Cada cuanto se revisan las partidas de los usuarios vinculados
@@ -124,21 +128,30 @@ async function checkPlayer(client, link, memberships) {
     if (lastSeen === latest.match_id) return;
     await setValorantLastMatch(link.userId, latest.match_id);
 
-    // La primera vez solo se guarda la partida, para no avisar partidas viejas al vincular
-    if (!lastSeen) return;
+    // La primera vez solo se guarda la partida, para no avisar partidas viejas al vincular.
+    // Los logros de rango se otorgan en silencio (ej. alguien que ya era Diamante al vincular)
+    if (!lastSeen) {
+        await checkRankAchievements(link.userId, rank);
+        return;
+    }
     if (latest.date_raw && Date.now() - latest.date_raw * 1000 > MAX_MATCH_AGE) return;
 
-    const targets = memberships.filter(m => m.channel && !announced.has(`${m.guildId}:${latest.match_id}`));
-    const bets = (await getAllBets()).filter(bet => bet.targetUserId === link.userId);
-    if (!targets.length && !bets.length) return;
-
     const match = await getMatch(latest.match_id);
+    const player = match.players?.all_players?.find(p => p.puuid === link.puuid);
+    await recordWeekStats(link.userId, latest, player, match);
+
+    const unlocked = [
+        ...await checkRankAchievements(link.userId, rank),
+        ...await checkMatchAchievements(link.userId, link.puuid, match, history)
+    ];
+
+    const bets = (await getAllBets()).filter(bet => bet.targetUserId === link.userId);
     if (bets.length) await resolveBets(client, bets, link, match);
 
+    const targets = memberships.filter(m => m.channel && !announced.has(`${m.guildId}:${latest.match_id}`));
     if (!targets.length) return;
 
-    const player = match.players?.all_players?.find(p => p.puuid === link.puuid);
-    const highlights = getHighlights(history, previousRank, rank, player);
+    const highlights = [...getHighlights(history, previousRank, rank, player), ...formatUnlocked(unlocked)];
     const embed = await buildMatchEmbed(match, link.puuid, latest.mmr_change_to_last_game);
 
     for (const { guildId, channel, member } of targets) {
@@ -149,6 +162,26 @@ async function checkPlayer(client, link, memberships) {
     }
 
     if (announced.size > 1000) announced.clear();
+}
+
+// Suma la partida a las estadisticas de la semana (para el resumen semanal)
+async function recordWeekStats(userId, entry, player, match) {
+    const week = weekKey(entry.date_raw ? new Date(entry.date_raw * 1000) : new Date());
+    const stats = await getWeekStats(week, userId) || { games: 0, wins: 0, losses: 0, rr: 0, bestKills: 0, bestKillsMap: null };
+    const team = match.teams?.[player?.team?.toLowerCase()];
+
+    stats.games++;
+    stats.rr += entry.mmr_change_to_last_game || 0;
+    if (team?.has_won) stats.wins++;
+    else if (team && team.rounds_won !== team.rounds_lost) stats.losses++;
+
+    const kills = player?.stats?.kills || 0;
+    if (kills > stats.bestKills) {
+        stats.bestKills = kills;
+        stats.bestKillsMap = match.metadata?.map || null;
+    }
+
+    await setWeekStats(week, userId, stats);
 }
 
 // Subida de rango, racha de victorias y partidas con muchas kills

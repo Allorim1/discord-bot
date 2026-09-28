@@ -61,6 +61,36 @@ async function getSkins(language) {
     return skins;
 }
 
+async function getBundles() {
+    return fetchCached('bundles', 'https://valorant-api.com/v1/bundles');
+}
+
+// uuid -> { name, icon } de todo lo que puede venir en un paquete:
+// niveles de skin, llaveros, sprays, tarjetas y titulos
+async function getCosmeticIndex() {
+    const [weapons, buddies, sprays, cards, titles] = await Promise.all([
+        getWeapons(),
+        fetchCached('buddylevels', 'https://valorant-api.com/v1/buddies/levels'),
+        fetchCached('sprays', 'https://valorant-api.com/v1/sprays'),
+        fetchCached('playercards', 'https://valorant-api.com/v1/playercards'),
+        fetchCached('playertitles', 'https://valorant-api.com/v1/playertitles')
+    ]);
+
+    const index = new Map();
+    for (const weapon of weapons) {
+        for (const skin of weapon.skins || []) {
+            const entry = { name: skin.displayName, icon: skin.displayIcon || skin.chromas?.[0]?.fullRender, type: 'Skin' };
+            index.set(skin.uuid, entry);
+            for (const level of skin.levels || []) index.set(level.uuid, entry);
+        }
+    }
+    for (const b of buddies) index.set(b.uuid, { name: b.displayName, icon: b.displayIcon, type: 'Llavero' });
+    for (const s of sprays) index.set(s.uuid, { name: s.displayName, icon: s.displayIcon, type: 'Spray' });
+    for (const c of cards) index.set(c.uuid, { name: c.displayName, icon: c.displayIcon, type: 'Tarjeta' });
+    for (const t of titles) index.set(t.uuid, { name: t.titleText || t.displayName, icon: null, type: 'Título' });
+    return index;
+}
+
 // Rangos en orden, del mas bajo al mas alto. El nombre coincide con translateRank()
 const RANK_TIERS = [
     { name: 'Hierro', color: '#4f514f' },
@@ -134,6 +164,8 @@ async function henrikRequest(path, { params, responseType, notFound } = {}) {
         if (status === 400 && notFound) throw new ValorantApiError(notFound);
         if (status === 429) throw new ValorantApiError('Demasiadas consultas, intenta de nuevo en un minuto.');
         if (status === 401 || status === 403) throw new ValorantApiError('La `HENRIK_API_KEY` no es válida.');
+        const apiMessage = error.response?.data?.errors?.[0]?.message || error.message;
+        console.error(`HenrikDev ${status || 'sin respuesta'} en ${path}: ${apiMessage}`);
         throw new ValorantApiError('No se pudo conectar con la API de Valorant. Intenta más tarde.');
     }
 }
@@ -205,6 +237,31 @@ async function getServerStatus(region) {
 
 async function getEsportsSchedule() {
     return henrikGet('/v1/esports/schedule');
+}
+
+// Paquete(s) destacados de la tienda (no requiere cuenta)
+async function getStoreFeatured() {
+    return henrikGet('/v2/store-featured');
+}
+
+// Precios en VP de todas las skins
+async function getStoreOffers() {
+    return henrikGet('/v2/store-offers');
+}
+
+// La cola de competitivo trae los mapas en rotacion.
+// affinity: na, eu, ap, kr (LATAM y Brasil juegan en na)
+async function getQueueStatus(affinity = 'na') {
+    return henrikGet(`/v1/queue-status/${affinity}`);
+}
+
+// Esports v2 (datos de vlr.gg): se usa si falla el calendario v1
+async function getVlrEvents(type = 'upcoming') {
+    return henrikGet('/v2/esports/vlr/events', { type });
+}
+
+async function getVlrEventMatches(eventId) {
+    return henrikGet(`/v2/esports/vlr/events/${eventId}/matches`);
 }
 
 // Resumen de las ultimas partidas guardadas de un jugador
@@ -322,8 +379,15 @@ module.exports = {
     getNews,
     getServerStatus,
     getEsportsSchedule,
+    getStoreFeatured,
+    getStoreOffers,
+    getQueueStatus,
+    getVlrEvents,
+    getVlrEventMatches,
     getContentTiers,
     getSkins,
+    getBundles,
+    getCosmeticIndex,
     RANK_TIERS,
     rankTierName,
     translateRank,

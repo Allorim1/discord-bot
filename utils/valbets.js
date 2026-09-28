@@ -1,8 +1,11 @@
 const { addCredits, deleteBet, getAllBets } = require('./db');
+const { grantAchievements, formatUnlocked } = require('./valachievements');
 
 // Si el jugador no juega una competitiva en este tiempo, se devuelve lo apostado
 const BET_EXPIRY = 12 * 60 * 60 * 1000;
 const PAYOUT = 2;
+// Apuesta minima para el logro "Alto riesgo"
+const HIGH_ROLLER = 1000;
 
 const PREDICTION_NAMES = { gana: 'gana', pierde: 'pierde' };
 
@@ -38,8 +41,11 @@ async function resolveBets(client, bets, link, match) {
         const result = team.has_won ? 'ganó' : 'perdió';
 
         if (won) {
-            const total = await addCredits(bet.userId, bet.amount * PAYOUT);
-            await notify(client, bet, `💰 **${link.name}** ${result} (${score}). <@${bet.userId}> ganó **${bet.amount * PAYOUT}** créditos. Saldo: ${total}`);
+            await addCredits(bet.userId, bet.amount * PAYOUT);
+            const unlocked = await grantAchievements(bet.userId, bet.amount >= HIGH_ROLLER ? ['buen_ojo', 'alto_riesgo'] : ['buen_ojo']);
+            const total = await addCredits(bet.userId, 0);
+            const lines = [`💰 **${link.name}** ${result} (${score}). <@${bet.userId}> ganó **${bet.amount * PAYOUT}** créditos. Saldo: ${total}`, ...formatUnlocked(unlocked)];
+            await notify(client, bet, lines.join('\n'));
         } else {
             await notify(client, bet, `💸 **${link.name}** ${result} (${score}). <@${bet.userId}> perdió los **${bet.amount}** créditos que apostó.`);
         }

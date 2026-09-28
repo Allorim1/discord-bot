@@ -296,6 +296,60 @@ async function getAllBets() {
 }
 
 
+// Logros de Valorant: { logroId: timestamp }
+async function getAchievements(userId) {
+    return await db.get(`valorant_achievements_${userId}`) || {};
+}
+
+async function setAchievements(userId, achievements) {
+    await db.set(`valorant_achievements_${userId}`, achievements);
+}
+
+// Respuestas correctas de /valtrivia
+async function addValTriviaAnswer(userId) {
+    const key = `valorant_trivia_${userId}`;
+    if (await db.get(key) === null) await db.set(key, 0);
+    return await db.add(key, 1);
+}
+
+async function getValTriviaAnswers(userId) {
+    return await db.get(`valorant_trivia_${userId}`) || 0;
+}
+
+// Estadisticas semanales: { games, wins, losses, rr, bestKills, bestKillsMap }
+async function getWeekStats(week, userId) {
+    return await db.get(`valorant_week_${week}_${userId}`) || null;
+}
+
+async function setWeekStats(week, userId, stats) {
+    await db.set(`valorant_week_${week}_${userId}`, stats);
+}
+
+async function getWeeklyPosted() {
+    return await db.get('valorant_weekly_posted') || null;
+}
+
+async function setWeeklyPosted(week) {
+    await db.set('valorant_weekly_posted', week);
+}
+
+// Valordle: partida del dia { guesses: [], solved, lost } y estadisticas { wins, streak, best, lastWinDay }
+async function getValordleGame(day, userId) {
+    return await db.get(`valorant_valordle_${day}_${userId}`) || { guesses: [], solved: false, lost: false };
+}
+
+async function setValordleGame(day, userId, game) {
+    await db.set(`valorant_valordle_${day}_${userId}`, game);
+}
+
+async function getValordleStats(userId) {
+    return await db.get(`valorant_valordle_stats_${userId}`) || { wins: 0, streak: 0, best: 0, lastWinDay: null };
+}
+
+async function setValordleStats(userId, stats) {
+    await db.set(`valorant_valordle_stats_${userId}`, stats);
+}
+
 module.exports = {
     getUserGarden,
     saveUserGarden,
@@ -331,5 +385,17 @@ module.exports = {
     getAllCredits,
     createBet,
     deleteBet,
-    getAllBets
+    getAllBets,
+    getAchievements,
+    setAchievements,
+    addValTriviaAnswer,
+    getValTriviaAnswers,
+    getWeekStats,
+    setWeekStats,
+    getWeeklyPosted,
+    setWeeklyPosted,
+    getValordleGame,
+    setValordleGame,
+    getValordleStats,
+    setValordleStats
 };

@@ -1,8 +1,11 @@
 const { getAgents, getWeapons, getMaps, getSkins, normalize } = require('./valorant');
-const { addTriviaPoint, addCredits } = require('./db');
+const { addTriviaPoint, addCredits, addValTriviaAnswer } = require('./db');
+const { grantAchievement, formatUnlocked } = require('./valachievements');
 
 const ANSWER_TIME = 30000;
 const CREDITS_REWARD = 25;
+// Respuestas correctas para el logro "Sabelotodo"
+const SABELOTODO = 10;
 
 // Una pregunta activa por canal: channelId -> { answers, display, timeout }
 const activeQuestions = new Map();
@@ -123,7 +126,11 @@ async function handleAnswer(message) {
 
     const points = await addTriviaPoint(message.author.id);
     await addCredits(message.author.id, CREDITS_REWARD);
-    await message.reply(`✅ ¡Correcto, ${message.author.username}! Era **${state.display}**. Ganaste 1 punto (total: ${points}) y ${CREDITS_REWARD} créditos.`);
+    const answers = await addValTriviaAnswer(message.author.id);
+    const unlocked = answers >= SABELOTODO ? await grantAchievement(message.author.id, 'sabelotodo') : [];
+
+    const lines = [`✅ ¡Correcto, ${message.author.username}! Era **${state.display}**. Ganaste 1 punto (total: ${points}) y ${CREDITS_REWARD} créditos.`, ...formatUnlocked(unlocked)];
+    await message.reply(lines.join('\n'));
     return true;
 }
 

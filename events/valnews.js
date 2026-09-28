@@ -1,6 +1,7 @@
 const { EmbedBuilder } = require('discord.js');
 const { getNews, getServerStatus } = require('../utils/valorant');
 const { getAllValorantChannels, getSeenNews, setSeenNews } = require('../utils/db');
+const { getFeaturedBundles, buildBundleEmbeds } = require('../utils/valstore');
 
 const POLL_INTERVAL = 30 * 60 * 1000;
 // Region de la que se avisan mantenimientos e incidentes
@@ -36,9 +37,10 @@ async function checkNews(client) {
         const channels = await getAllValorantChannels('noticias');
         if (!channels.length) return;
 
-        const [news, status] = await Promise.all([
+        const [news, status, bundles] = await Promise.all([
             getNews().catch(() => []),
-            getServerStatus(STATUS_REGION).catch(() => null)
+            getServerStatus(STATUS_REGION).catch(() => null),
+            getFeaturedBundles().catch(() => [])
         ]);
 
         const items = [
@@ -46,7 +48,8 @@ async function checkNews(client) {
                 .filter(n => !SKIPPED_CATEGORIES.includes(n.category))
                 .map(n => ({ id: `news:${n.url}`, embed: () => newsEmbed(n) })),
             ...(status?.maintenances || []).map(s => ({ id: `status:${s.id}`, embed: () => statusEmbed(s, 'MAINTENANCE') })),
-            ...(status?.incidents || []).map(s => ({ id: `status:${s.id}`, embed: () => statusEmbed(s, 'INCIDENT') }))
+            ...(status?.incidents || []).map(s => ({ id: `status:${s.id}`, embed: () => statusEmbed(s, 'INCIDENT') })),
+            ...bundles.filter(b => b.uuid).map(b => ({ id: `bundle:${b.uuid}`, bundle: b }))
         ];
 
         const seen = await getSeenNews();
@@ -63,7 +66,7 @@ async function checkNews(client) {
         for (const item of fresh) {
             let embed;
             try {
-                embed = item.embed();
+                embed = item.bundle ? (await buildBundleEmbeds([item.bundle]))[0] : item.embed();
             } catch (error) {
                 console.error(`Noticia de Valorant con datos invalidos (${item.id}):`, error.message);
                 continue;

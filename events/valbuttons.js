@@ -1,10 +1,37 @@
 const { getLobby, renderLobby } = require('../utils/vallobby');
+const { getVeto, applyChoice, renderMessage } = require('../utils/valveto');
+
+// Botones de /veto: valveto:map:<vetoId>:<indice> o valveto:cancel:<vetoId>
+async function handleVeto(interaction) {
+    const [, action, vetoId, mapIndex] = interaction.customId.split(':');
+    const veto = getVeto(vetoId);
+
+    try {
+        if (!veto) return await interaction.reply({ content: 'Este veto ya expiró.', ephemeral: true });
+
+        if (action === 'cancel') {
+            if (!veto.captains.includes(interaction.user.id)) {
+                return await interaction.reply({ content: 'Solo los capitanes pueden cancelar el veto.', ephemeral: true });
+            }
+            veto.cancelled = true;
+        } else {
+            const error = applyChoice(veto, interaction.user.id, Number(mapIndex));
+            if (error) return await interaction.reply({ content: error, ephemeral: true });
+        }
+
+        await interaction.update(renderMessage(veto));
+    } catch (error) {
+        console.error('Error en botón de /veto:', error);
+    }
+}
 
 // Botones de /buscar: valbuscar:<accion>:<lobbyId>
 module.exports = {
     name: 'interactionCreate',
     async execute(interaction) {
-        if (!interaction.isButton() || !interaction.customId.startsWith('valbuscar:')) return;
+        if (!interaction.isButton()) return;
+        if (interaction.customId.startsWith('valveto:')) return handleVeto(interaction);
+        if (!interaction.customId.startsWith('valbuscar:')) return;
 
         const [, action, lobbyId] = interaction.customId.split(':');
         const lobby = getLobby(lobbyId);
