@@ -143,7 +143,7 @@ const COMMANDS = [
     },
     {
         name: 'valcanal',
-        description: 'Elegir el canal de avisos de partidas (admins)',
+        description: 'Elegir el canal de avisos de partidas o noticias (admins)',
         category: 'Valorant',
         cooldown: 5,
         aliases: []
@@ -179,6 +179,90 @@ const COMMANDS = [
     {
         name: 'valtrivia',
         description: 'Lanzar una pregunta de trivia de Valorant',
+        category: 'Valorant',
+        cooldown: 10,
+        aliases: []
+    },
+    {
+        name: 'stats',
+        description: 'Estadisticas de las ultimas 20 competitivas',
+        category: 'Valorant',
+        cooldown: 10,
+        aliases: []
+    },
+    {
+        name: 'comparar',
+        description: 'Comparar tus estadisticas con otro jugador',
+        category: 'Valorant',
+        cooldown: 15,
+        aliases: []
+    },
+    {
+        name: 'valtop',
+        description: 'Ranking de Valorant del servidor',
+        category: 'Valorant',
+        cooldown: 10,
+        aliases: []
+    },
+    {
+        name: 'valroles',
+        description: 'Roles automaticos por rango (admins)',
+        category: 'Valorant',
+        cooldown: 10,
+        aliases: []
+    },
+    {
+        name: 'equipos',
+        description: 'Armar 2 equipos con el canal de voz y sortear mapa',
+        category: 'Valorant',
+        cooldown: 10,
+        aliases: []
+    },
+    {
+        name: 'agenterandom',
+        description: 'Agente al azar (opcional por rol)',
+        category: 'Valorant',
+        cooldown: 3,
+        aliases: []
+    },
+    {
+        name: 'buscar',
+        description: 'Buscar companeros para jugar',
+        category: 'Valorant',
+        cooldown: 30,
+        aliases: []
+    },
+    {
+        name: 'apostar',
+        description: 'Apostar creditos a si alguien gana su proxima competitiva',
+        category: 'Valorant',
+        cooldown: 5,
+        aliases: []
+    },
+    {
+        name: 'creditos',
+        description: 'Ver tus creditos o el ranking',
+        category: 'Valorant',
+        cooldown: 5,
+        aliases: []
+    },
+    {
+        name: 'skin',
+        description: 'Ver una skin con sus variantes',
+        category: 'Valorant',
+        cooldown: 5,
+        aliases: []
+    },
+    {
+        name: 'mira',
+        description: 'Ver una mira a partir de su codigo',
+        category: 'Valorant',
+        cooldown: 5,
+        aliases: []
+    },
+    {
+        name: 'vct',
+        description: 'Proximos partidos y resultados de esports',
         category: 'Valorant',
         cooldown: 10,
         aliases: []

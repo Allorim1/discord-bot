@@ -61,7 +61,7 @@ module.exports = {
                 { name: 'Gobierno', value: '!settle !manage', inline: false },
                 { name: 'Jardin', value: '!garden !plant !shop', inline: false },
                 { name: 'Trivia', value: '!leaderboard !triviascore', inline: false },
-                { name: 'Valorant', value: '!vincular !desvincular !rango !partida !valcanal !agente !arma !mapa !valtrivia', inline: false }
+                { name: 'Valorant', value: '!vincular !desvincular !rango !partida !stats !comparar !valtop\n!equipos !agenterandom !buscar !valtrivia !apostar !creditos\n!agente !arma !mapa !skin !mira !vct\nAdmins: !valcanal !valroles', inline: false }
             )
             .setFooter({ text: 'Tip: Usa !help <categoria> para ver comandos especificos • Ketil Farm RPG' });
         

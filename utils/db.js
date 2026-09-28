@@ -169,6 +169,7 @@ async function setValorantLink(userId, link) {
 async function deleteValorantLink(userId) {
     await db.delete(`valorant_link_${userId}`);
     await db.delete(`valorant_lastmatch_${userId}`);
+    await db.delete(`valorant_rank_${userId}`);
 }
 
 async function getAllValorantLinks() {
@@ -189,24 +190,111 @@ async function setValorantLastMatch(userId, matchId) {
     await db.set(`valorant_lastmatch_${userId}`, matchId);
 }
 
-async function getValorantChannel(guildId) {
-    return await db.get(`valorant_channel_${guildId}`) || null;
+// Canales de avisos: 'partidas' (resultados) o 'noticias' (parches y estado de servidores)
+const CHANNEL_KEYS = {
+    partidas: 'valorant_channel_',
+    noticias: 'valorant_newschannel_'
+};
+
+async function getValorantChannel(guildId, type = 'partidas') {
+    return await db.get(`${CHANNEL_KEYS[type]}${guildId}`) || null;
 }
 
-async function setValorantChannel(guildId, channelId) {
-    if (channelId) await db.set(`valorant_channel_${guildId}`, channelId);
-    else await db.delete(`valorant_channel_${guildId}`);
+async function setValorantChannel(guildId, channelId, type = 'partidas') {
+    if (channelId) await db.set(`${CHANNEL_KEYS[type]}${guildId}`, channelId);
+    else await db.delete(`${CHANNEL_KEYS[type]}${guildId}`);
 }
 
-async function getAllValorantChannels() {
+async function getAllValorantChannels(type = 'partidas') {
+    const prefix = CHANNEL_KEYS[type];
     const channels = [];
     for (const row of await db.all()) {
-        if (row.id.startsWith('valorant_channel_')) {
-            channels.push({ guildId: row.id.replace('valorant_channel_', ''), channelId: row.value });
+        if (row.id.startsWith(prefix)) {
+            channels.push({ guildId: row.id.replace(prefix, ''), channelId: row.value });
         }
     }
     return channels;
 }
+
+// Ultimo rango conocido: { tier, rank, rr, elo, updatedAt }
+async function getValorantRank(userId) {
+    return await db.get(`valorant_rank_${userId}`) || null;
+}
+
+async function setValorantRank(userId, rank) {
+    await db.set(`valorant_rank_${userId}`, rank);
+}
+
+// Roles por rango de un servidor: { Hierro: roleId, Bronce: roleId, ... }
+async function getValorantRoles(guildId) {
+    return await db.get(`valorant_roles_${guildId}`) || null;
+}
+
+async function setValorantRoles(guildId, roles) {
+    if (roles) await db.set(`valorant_roles_${guildId}`, roles);
+    else await db.delete(`valorant_roles_${guildId}`);
+}
+
+async function getAllValorantRoles() {
+    const all = {};
+    for (const row of await db.all()) {
+        if (row.id.startsWith('valorant_roles_')) {
+            all[row.id.replace('valorant_roles_', '')] = row.value;
+        }
+    }
+    return all;
+}
+
+// Noticias y avisos de servidores ya publicados
+async function getSeenNews() {
+    return await db.get('valorant_news_seen') || null;
+}
+
+async function setSeenNews(ids) {
+    await db.set('valorant_news_seen', ids.slice(-300));
+}
+
+// Creditos: moneda propia de Valorant
+const STARTING_CREDITS = 500;
+
+async function getCredits(userId) {
+    const credits = await db.get(`valorant_credits_${userId}`);
+    return credits ?? STARTING_CREDITS;
+}
+
+async function addCredits(userId, amount) {
+    const key = `valorant_credits_${userId}`;
+    if (await db.get(key) === null) await db.set(key, STARTING_CREDITS);
+    return await db.add(key, amount);
+}
+
+async function getAllCredits() {
+    const all = {};
+    for (const row of await db.all()) {
+        if (row.id.startsWith('valorant_credits_')) {
+            all[row.id.replace('valorant_credits_', '')] = row.value;
+        }
+    }
+    return all;
+}
+
+// Apuestas: { id, userId, guildId, channelId, targetUserId, puuid, region, prediction, amount, createdAt }
+async function createBet(bet) {
+    await db.set(`valorant_bet_${bet.id}`, bet);
+}
+
+async function deleteBet(betId) {
+    await db.delete(`valorant_bet_${betId}`);
+}
+
+async function getAllBets() {
+    const bets = [];
+    for (const row of await db.all()) {
+        if (row.id.startsWith('valorant_bet_')) bets.push(row.value);
+    }
+    return bets;
+}
+
 
 module.exports = {
     getUserGarden,
@@ -229,5 +317,19 @@ module.exports = {
     setValorantLastMatch,
     getValorantChannel,
     setValorantChannel,
-    getAllValorantChannels
+    getAllValorantChannels,
+    getValorantRank,
+    setValorantRank,
+    getValorantRoles,
+    setValorantRoles,
+    getAllValorantRoles,
+    getSeenNews,
+    setSeenNews,
+    STARTING_CREDITS,
+    getCredits,
+    addCredits,
+    getAllCredits,
+    createBet,
+    deleteBet,
+    getAllBets
 };

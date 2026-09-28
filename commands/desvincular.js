@@ -1,5 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
-const { getValorantLink, deleteValorantLink } = require('../utils/db');
+const { getValorantLink, deleteValorantLink, getValorantRoles } = require('../utils/db');
+const { removeRankRoles } = require('../utils/valroles');
 
 const COLORS = { PRIMARY: '#ff4655', WARNING: '#ffaa00' };
 
@@ -25,6 +26,9 @@ module.exports = {
         }
 
         await deleteValorantLink(userId);
+
+        const roles = context.guild && await getValorantRoles(context.guild.id);
+        if (roles && context.member) await removeRankRoles(context.member, roles).catch(() => null);
 
         const embed = new EmbedBuilder()
             .setColor(COLORS.PRIMARY)

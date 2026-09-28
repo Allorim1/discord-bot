@@ -30,6 +30,7 @@ module.exports = {
             .setFooter({ text: `Escribe la respuesta en el chat. Tienes ${question.seconds} segundos.` });
 
         if (question.thumbnail) embed.setThumbnail(question.thumbnail);
+        if (question.image) embed.setImage(question.image);
 
         return { embeds: [embed] };
     }

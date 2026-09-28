@@ -1,7 +1,8 @@
-const { getAgents, getWeapons, normalize } = require('./valorant');
-const { addTriviaPoint } = require('./db');
+const { getAgents, getWeapons, getMaps, getSkins, normalize } = require('./valorant');
+const { addTriviaPoint, addCredits } = require('./db');
 
 const ANSWER_TIME = 30000;
+const CREDITS_REWARD = 25;
 
 // Una pregunta activa por canal: channelId -> { answers, display, timeout }
 const activeQuestions = new Map();
@@ -43,6 +44,31 @@ const GENERATORS = [
         return {
             question: `¿De qué agente es esta descripción?\n> ${hidden}`,
             answers: [agent.displayName]
+        };
+    },
+    async function abilityIcon() {
+        const agent = pick(await getAgents());
+        const ability = pick(agent.abilities.filter(a => a.displayIcon && a.slot !== 'Passive'));
+        return {
+            question: '¿De qué agente es esta habilidad?',
+            answers: [agent.displayName],
+            image: ability.displayIcon
+        };
+    },
+    async function minimap() {
+        const map = pick((await getMaps()).filter(m => m.displayIcon));
+        return {
+            question: '¿Qué mapa es este?',
+            answers: [map.displayName],
+            image: map.displayIcon
+        };
+    },
+    async function skinWeapon() {
+        const skin = pick((await getSkins()).filter(s => s.displayIcon));
+        return {
+            question: '¿De qué arma es esta skin?',
+            answers: [skin.weaponName],
+            image: skin.displayIcon
         };
     },
     async function weaponCost() {
@@ -96,7 +122,8 @@ async function handleAnswer(message) {
     clearTimeout(state.timeout);
 
     const points = await addTriviaPoint(message.author.id);
-    await message.reply(`✅ ¡Correcto, ${message.author.username}! Era **${state.display}**. Ganaste 1 punto. Total: ${points}`);
+    await addCredits(message.author.id, CREDITS_REWARD);
+    await message.reply(`✅ ¡Correcto, ${message.author.username}! Era **${state.display}**. Ganaste 1 punto (total: ${points}) y ${CREDITS_REWARD} créditos.`);
     return true;
 }
 
